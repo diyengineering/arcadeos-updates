@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ARCadeOS &mdash; update feed</title>
+<link rel="icon" href="./favicon.ico">
+<style>
+  :root{--bg:#0E1117;--card:#222734;--accent:#EE7C20;--accent2:#FF9233;
+    --ink:#E8EAF0;--inksoft:#C2C7D2;--muted:#969CAB;--hair:#363D4B;--blue:#3FA7FF}
+  *{box-sizing:border-box}html,body{margin:0}
+  body{font:16px/1.55 "Segoe UI",system-ui,sans-serif;color:var(--ink);min-height:100vh;padding:0 1.2rem;
+    background:radial-gradient(1100px 640px at 50% -8%,#1b2233 0%,var(--bg) 62%) fixed}
+  .wrap{max-width:58rem;margin:0 auto;padding:3.6rem 0 4rem}
+  header{text-align:center;margin-bottom:2.7rem}
+  .logo{width:min(440px,82vw);height:auto;
+    filter:drop-shadow(0 8px 26px rgba(0,0,0,.55)) drop-shadow(0 0 34px rgba(238,124,32,.16))}
+  .tag{color:var(--inksoft);margin:1rem 0 0;font-size:1.06rem}.tag b{color:var(--accent2)}
+  .grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr))}
+  .card{background:linear-gradient(180deg,var(--card) 0%,#1c212d 100%);border:1px solid var(--hair);
+    border-radius:16px;padding:1.3rem;box-shadow:0 12px 32px rgba(0,0,0,.38);transition:transform .12s,border-color .12s}
+  .card:hover{transform:translateY(-3px);border-color:var(--accent)}
+  .chrow{display:flex;align-items:center;gap:.55rem;margin-bottom:.15rem}
+  .ch{font-weight:800;font-size:1.25rem;text-transform:capitalize}
+  .badge{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:.16rem .5rem;
+    border-radius:999px;background:rgba(238,124,32,.15);color:var(--accent2);border:1px solid rgba(238,124,32,.34)}
+  .ver{color:var(--muted);font-size:.92rem;margin:.15rem 0 1.05rem}.ver b{color:var(--ink)}
+  .links{display:flex;flex-wrap:wrap;gap:.5rem}
+  a.btn{text-decoration:none;font-weight:700;font-size:.85rem;padding:.5rem .82rem;border-radius:10px;display:inline-flex}
+  a.primary{background:linear-gradient(180deg,var(--accent2),var(--accent));color:#1a1208;
+    box-shadow:0 4px 14px rgba(238,124,32,.34)}a.primary:hover{filter:brightness(1.07)}
+  a.ghost{background:#2a3140;color:var(--inksoft);border:1px solid var(--hair)}
+  a.ghost:hover{border-color:var(--blue);color:#fff}
+  footer{margin-top:2.7rem;text-align:center;color:var(--muted);font-size:.82rem}
+  code{background:#10141c;border:1px solid var(--hair);padding:.12rem .42rem;border-radius:6px;color:var(--inksoft)}
+</style></head>
+<body><div class="wrap">
+  <header>
+    <img class="logo" src="./arcadeos-logo.png" alt="ARCadeOS">
+    <p class="tag">Self-update feed for <b>ARCadeOS</b> &mdash; the arcade &amp; pinball cabinet frontend.</p>
+  </header>
+  <div class="grid">
+        <div class="card">
+          <div class="chrow"><span class="ch">stable</span><span class="badge">default</span></div>
+          <div class="ver">Latest&nbsp;<b>v1.14.0</b></div>
+          <div class="links"><a class="btn primary" href="./stable/ARCadeOS-stable-Setup.exe">Download installer</a><a class="btn ghost" href="./stable/releases.stable.json">Feed manifest</a></div>
+        </div>
+  </div>
+  <footer>The app reads <code>arcadeos.updates.diy.engineering/&lt;channel&gt;/</code>. Internal artifact host &mdash; game content is not distributed here.</footer>
+</div></body></html>
