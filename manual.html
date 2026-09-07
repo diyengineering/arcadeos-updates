@@ -1,0 +1,788 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ARCadeOS &mdash; User Manual</title>
+<meta name="description" content="The complete user manual for ARCadeOS, the operating system of the ARCade cabinet by DIY Engineering. Controls, adding games, ARCade Share, settings, updates and troubleshooting.">
+<meta property="og:title" content="ARCadeOS â€” User Manual">
+<meta property="og:description" content="Everything you need to run your ARCade cabinet: controls, adding games, ARCade Share, settings and troubleshooting.">
+<meta property="og:type" content="article">
+<meta property="og:image" content="./assets/brand/emblem.png">
+<link rel="icon" href="./assets/favicon.ico">
+<style>
+  /* Palette shared with the ARCadeOS landing page and the frontend itself. */
+  :root{
+    --bg:#0E1117; --bg2:#141a24; --panel:#1a2029; --card:#222734; --card2:#1c212d;
+    --accent:#EE7C20; --accent2:#FF9233; --blue:#3FA7FF; --blue2:#6cc0ff;
+    --ink:#E8EAF0; --inksoft:#C2C7D2; --muted:#969CAB; --hair:#333b49; --hair2:#2a3140;
+    --ok:#3fb950; --warn:#e3b341; --bad:#f85149;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  html,body{margin:0}
+  body{font:16px/1.65 "Segoe UI",system-ui,-apple-system,sans-serif;color:var(--ink);
+       background:var(--bg);-webkit-font-smoothing:antialiased}
+  /* height:auto is load-bearing: every screenshot carries width/height attributes, so constraining only
+     the width (as the print sheet does) would otherwise keep the attribute's height and stretch it. */
+  img{max-width:100%;height:auto;display:block}
+  a{color:var(--blue2);text-decoration:none}
+  a:hover{text-decoration:underline}
+  h1,h2,h3,h4{margin:0;line-height:1.18;letter-spacing:-.01em}
+
+  /* ---------- masthead ----------
+     Deliberately the same visual language as the landing page hero: the neon wordmark carries the brand
+     (so the heading does not repeat "ARCadeOS"), warm-left / cool-right radial washes, a gradient-cut
+     accent word, and the same version pill. */
+  .mast{position:relative;overflow:hidden;border-bottom:1px solid var(--hair2);
+        background:
+          radial-gradient(900px 460px at 18% 0%,rgba(238,124,32,.16),transparent 60%),
+          radial-gradient(900px 460px at 82% 8%,rgba(63,167,255,.16),transparent 60%),
+          linear-gradient(180deg,#10151e 0%,var(--bg) 78%)}
+  .mast .in{max-width:60rem;margin:0 auto;padding:3.4rem 1.4rem 3rem;text-align:center}
+  .mast .wordmark{width:min(420px,80%);margin:0 auto 1.5rem;
+        filter:drop-shadow(0 10px 40px rgba(0,0,0,.6)) drop-shadow(0 0 46px rgba(238,124,32,.18))}
+  .eyebrow{font-size:.74rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--accent2)}
+  .mast h1{font-size:clamp(1.9rem,4.6vw,2.8rem);font-weight:850;margin:.5rem 0 .7rem}
+  .mast h1 .g{background:linear-gradient(90deg,var(--accent2),var(--blue));
+        -webkit-background-clip:text;background-clip:text;color:transparent}
+  .mast p{color:var(--inksoft);max-width:38rem;margin:0 auto;font-size:1.06rem}
+  .verpill{display:inline-flex;align-items:center;gap:.5rem;margin-top:1.7rem;
+        font-size:.82rem;color:var(--inksoft);background:rgba(255,255,255,.04);
+        border:1px solid var(--hair);border-radius:999px;padding:.4rem .9rem}
+  .verpill b{color:var(--ink)}
+  .dot{width:8px;height:8px;border-radius:50%;background:#43d17a;box-shadow:0 0 10px #43d17a;flex:none}
+
+  /* ---------- layout ---------- */
+  .shell{max-width:76rem;margin:0 auto;padding:0 1.4rem;display:grid;
+         grid-template-columns:17rem minmax(0,1fr);gap:3rem;align-items:start}
+  @media (max-width:64rem){ .shell{grid-template-columns:1fr;gap:0} }
+
+  /* ---------- contents ---------- */
+  nav.toc{position:sticky;top:1.5rem;max-height:calc(100vh - 3rem);overflow:auto;
+          padding:1.4rem 0 3rem;font-size:.92rem}
+  @media (max-width:64rem){ nav.toc{position:static;max-height:none;
+          border-bottom:1px solid var(--hair2);margin-bottom:1rem} }
+  nav.toc h2{font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent2);
+          margin:0 0 .9rem}
+  nav.toc ol{list-style:none;margin:0;padding:0;counter-reset:sec}
+  nav.toc > ol > li{counter-increment:sec;margin:.1rem 0}
+  nav.toc > ol > li > a::before{content:counter(sec) ".";color:var(--muted);
+          display:inline-block;width:1.5rem;font-variant-numeric:tabular-nums}
+  nav.toc a{display:block;color:var(--inksoft);padding:.3rem .5rem;border-radius:7px}
+  nav.toc a:hover{background:var(--card2);color:var(--ink);text-decoration:none}
+  nav.toc ol ol{padding-left:1.5rem;margin:.1rem 0 .4rem}
+  nav.toc ol ol a{color:var(--muted);font-size:.88rem;padding:.18rem .5rem}
+
+  /* ---------- article ---------- */
+  main{padding:2.4rem 0 5rem;min-width:0}
+  section{padding-top:2.2rem;margin-bottom:2.6rem;border-top:1px solid var(--hair2)}
+  section:first-of-type{border-top:0;padding-top:0}
+  section > h2{font-size:1.75rem;font-weight:850;margin-bottom:.4rem;scroll-margin-top:1.5rem}
+  section > h2 .num{color:var(--accent);margin-right:.55rem}
+  h3{font-size:1.12rem;font-weight:800;margin:2rem 0 .5rem;scroll-margin-top:1.5rem}
+  h4{font-size:.98rem;font-weight:800;margin:1.3rem 0 .35rem;color:var(--inksoft)}
+  p{margin:.7rem 0}
+  ul,ol.steps{margin:.7rem 0;padding-left:1.25rem}
+  li{margin:.34rem 0}
+  .lede{color:var(--inksoft);font-size:1.05rem}
+
+  /* ---------- figures ---------- */
+  figure{margin:1.4rem 0;background:var(--card2);border:1px solid var(--hair2);
+         border-radius:14px;padding:.9rem;break-inside:avoid;text-align:center}
+  figure img{border-radius:9px;border:1px solid var(--hair2);margin:0 auto;max-height:78vh;width:auto}
+  figcaption{color:var(--muted);font-size:.85rem;margin-top:.75rem}
+  figcaption b{color:var(--inksoft)}
+  .fig-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem}
+  .fig-row figure{margin:0}
+
+  /* annotated screenshot */
+  .shot{position:relative;display:inline-block;margin:0 auto}
+  .shot .pin{position:absolute;width:26px;height:26px;border-radius:50%;
+        background:var(--accent);color:#1a1005;font-weight:900;font-size:.82rem;
+        display:grid;place-items:center;transform:translate(-50%,-50%);
+        box-shadow:0 0 0 3px rgba(14,17,23,.85),0 3px 10px rgba(0,0,0,.5)}
+  .legend{list-style:none;padding:0;margin:1rem 0 0;text-align:left;
+        display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:.35rem .9rem}
+  .legend li{display:flex;gap:.55rem;align-items:baseline;color:var(--inksoft);font-size:.92rem;margin:0}
+  .legend .n{flex:none;width:20px;height:20px;border-radius:50%;background:var(--accent);
+        color:#1a1005;font-weight:900;font-size:.72rem;display:grid;place-items:center}
+
+  /* ---------- tables ---------- */
+  table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.94rem}
+  th,td{text-align:left;padding:.6rem .7rem;border-bottom:1px solid var(--hair2);vertical-align:top}
+  th{color:var(--muted);font-size:.74rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800}
+  tbody tr:nth-child(odd){background:rgba(255,255,255,.016)}
+  td b{color:var(--ink)}
+
+  /* button glyphs */
+  .btn{display:inline-block;min-width:1.55em;padding:.06em .45em;border-radius:6px;
+       font-weight:800;font-size:.82em;text-align:center;border:1px solid var(--hair);
+       background:var(--card);color:var(--ink);white-space:nowrap}
+  .btn.a{background:#153a20;border-color:#1f5c31;color:#79e08d}
+  .btn.b{background:#3a1616;border-color:#5c2020;color:#ff8f85}
+  .btn.x{background:#132c4a;border-color:#1d4670;color:#7fc0ff}
+  .btn.y{background:#3d3413;border-color:#5f5220;color:#f0cf6a}
+  kbd{font:inherit;font-size:.84em;padding:.08em .45em;border-radius:5px;
+      border:1px solid var(--hair);background:var(--panel);color:var(--inksoft)}
+
+  /* ---------- callouts ---------- */
+  .note{border-left:3px solid var(--blue);background:rgba(63,167,255,.07);
+        padding:.85rem 1rem;border-radius:0 10px 10px 0;margin:1.1rem 0;break-inside:avoid}
+  .tip{border-left-color:var(--accent);background:rgba(238,124,32,.08)}
+  .warn{border-left-color:var(--warn);background:rgba(227,179,65,.08)}
+  .note p{margin:.25rem 0}
+  .note .lbl{font-size:.72rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase;
+        color:var(--blue2);display:block;margin-bottom:.2rem}
+  .tip .lbl{color:var(--accent2)} .warn .lbl{color:var(--warn)}
+
+  /* ---------- support cards ---------- */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem;margin:1.2rem 0}
+  .card{background:var(--card2);border:1px solid var(--hair2);border-radius:14px;padding:1.1rem}
+  .card h4{margin:0 0 .3rem;color:var(--ink)}
+  .card p{margin:0;color:var(--muted);font-size:.9rem}
+  .card a{font-weight:700}
+
+  .toolbar{position:fixed;right:1.1rem;bottom:1.1rem;z-index:30;display:flex;gap:.5rem}
+  .toolbar button,.toolbar a{font:inherit;font-size:.86rem;font-weight:700;cursor:pointer;
+        padding:.55rem .95rem;border-radius:999px;border:1px solid var(--hair);
+        background:var(--card);color:var(--ink);box-shadow:0 6px 20px rgba(0,0,0,.45)}
+  .toolbar button:hover{border-color:var(--accent);color:var(--accent2)}
+
+  footer{border-top:1px solid var(--hair2);color:var(--muted);font-size:.86rem;
+         padding:2rem 1.4rem 3rem;text-align:center}
+
+  @media print{
+    /* On paper this must be ink-cheap and self-contained: light ground, dark text, every link's
+       destination spelled out, nothing sticky or clipped. */
+    :root{--bg:#fff;--bg2:#fff;--panel:#f3f4f6;--card:#f7f8fa;--card2:#fff;
+          --ink:#111418;--inksoft:#2b3038;--muted:#5b626e;--hair:#c8ccd4;--hair2:#dfe2e8}
+    body{font-size:10.5pt;line-height:1.5}
+    .toolbar{display:none !important}
+    .mast{background:none;border-bottom:2px solid var(--accent)}
+    .mast .in{padding:0 0 1.1rem}
+    /* The wordmark carries its own dark sign panel, so it reads on white â€” but the glow is just wasted ink. */
+    .mast .wordmark{width:78mm;filter:none;margin:0 auto .9rem}
+    /* Gradient-clipped text relies on colour:transparent; if a print engine drops the clip the word
+       vanishes entirely. Solid accent on paper. */
+    .mast h1 .g{background:none;-webkit-text-fill-color:currentColor;color:var(--accent)}
+    .verpill{background:none;margin-top:.9rem}
+    .dot{display:none}   /* a green "live" dot means nothing on a printed page */
+    .shell{display:block;max-width:none;padding:0}
+    /* Contents shares page 1 with the masthead and gets a page break after it. Two columns because a
+       single column overflowed by four lines onto an otherwise empty second sheet. */
+    nav.toc{position:static;max-height:none;padding:0;break-after:page;font-size:.92em}
+    nav.toc a{padding:.1rem .4rem}
+    nav.toc ol ol{margin:0}
+    nav.toc > ol{column-count:2;column-gap:1.6rem}
+    nav.toc > ol > li{break-inside:avoid}
+    main{padding:0}
+    /* Sections FLOW rather than each starting a new page. Forcing a break before every one produced a
+       run of half-empty sheets (a two-paragraph section still burned a full page), which is what
+       "lots of blank pages" actually was. Headings still stay with their content. */
+    section{break-before:auto;border-top:1px solid var(--hair2);padding-top:1rem;margin-bottom:1.4rem}
+    section > h2{break-before:auto}
+    h2,h3,h4{break-after:avoid}
+    table{break-inside:auto}
+    tr{break-inside:avoid}
+    figure{border:1px solid var(--hair2);background:none;margin:.8rem 0}
+    /* A portrait screenshot is 660x1225, so it must be capped by HEIGHT as well as width â€” at full page
+       width it would be ~324mm tall, taller than any sheet, which makes break-inside:avoid throw it to
+       the next page and leave the previous one blank. Both dimensions bounded, aspect preserved. */
+    figure img{max-width:74mm;max-height:126mm;width:auto;height:auto}
+    /* Side-by-side pairs may split across a page; only each figure is indivisible. */
+    .fig-row{break-inside:auto}
+    .legend{gap:.15rem .8rem;font-size:.9em}
+    p,li{orphans:2;widows:2}
+    a{color:#0b57a4}
+    main a[href^="http"]::after{content:" (" attr(href) ")";font-size:.85em;color:#5b626e;word-break:break-all}
+    tbody tr:nth-child(odd){background:none}
+    footer{border-top:1px solid var(--hair2)}
+  }
+</style>
+</head><body>
+
+<div class="toolbar">
+  <button onclick="window.print()" title="Print, or save as PDF">Print / Save PDF</button>
+  <a href="./index.html">ARCadeOS home</a>
+</div>
+
+<header class="mast"><div class="in">
+  <img class="wordmark" src="./assets/brand/wordmark.png" alt="ARCadeOS">
+  <div class="eyebrow">Owner&rsquo;s guide</div>
+  <h1>User <span class="g">Manual</span></h1>
+  <p>Everything you need to run your ARCade cabinet &mdash; from your first game to swapping your
+     library with another cabinet on the other side of the world.</p>
+  <div class="verpill"><span class="dot"></span> Written for ARCadeOS <b>v1.28.44</b>
+    &middot; &copy; 2026 DIY.Engineering LLC</div>
+</div></header>
+
+<div class="shell">
+
+<nav class="toc" aria-label="Contents">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#start">Getting started</a>
+      <ol>
+        <li><a href="#anatomy">The main screen</a></li>
+        <li><a href="#firstrun">First-time setup</a></li>
+      </ol>
+    </li>
+    <li><a href="#controls">Your controls</a>
+      <ol>
+        <li><a href="#buttons">Button reference</a></li>
+        <li><a href="#remap">Remapping</a></li>
+      </ol>
+    </li>
+    <li><a href="#browse">Browsing your library</a>
+      <ol>
+        <li><a href="#categories">Categories</a></li>
+        <li><a href="#az">The A&ndash;Z jump bar</a></li>
+        <li><a href="#favorites">Favourites &amp; Recent</a></li>
+      </ol>
+    </li>
+    <li><a href="#playing">Playing games</a>
+      <ol>
+        <li><a href="#launch">Launching and quitting</a></li>
+        <li><a href="#details">The details screen</a></li>
+        <li><a href="#sound">Music &amp; sound</a></li>
+      </ol>
+    </li>
+    <li><a href="#adding">Adding games</a>
+      <ol>
+        <li><a href="#usb">From a USB drive</a></li>
+        <li><a href="#folder">From a folder</a></li>
+        <li><a href="#readiness">Systems readiness</a></li>
+      </ol>
+    </li>
+    <li><a href="#share">ARCade Share</a>
+      <ol>
+        <li><a href="#share-on">Turning it on</a></li>
+        <li><a href="#share-give">Sharing your games</a></li>
+        <li><a href="#share-get">Downloading</a></li>
+        <li><a href="#share-privacy">Privacy</a></li>
+      </ol>
+    </li>
+    <li><a href="#settings">Settings</a></li>
+    <li><a href="#updates">Staying up to date</a></li>
+    <li><a href="#care">Care &amp; troubleshooting</a>
+      <ol>
+        <li><a href="#diagnostics">Diagnostics &amp; repair</a></li>
+        <li><a href="#backup">Backups</a></li>
+        <li><a href="#problems">Common problems</a></li>
+      </ol>
+    </li>
+    <li><a href="#support">Support &amp; contact</a></li>
+    <li><a href="#quickref">Quick reference</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ 1 -->
+<section id="start">
+  <h2><span class="num">1</span>Getting started</h2>
+  <p class="lede">ARCadeOS is the operating system of the ARCade cabinet by DIY Engineering. It turns
+  the cabinet into a single, gamepad-first machine: every arcade board, pinball table, console and PC
+  game you own in one place, with artwork, attract video and music &mdash; and never a desktop in sight.</p>
+
+  <p>You do not need a keyboard or a mouse. Everything in this manual can be done from the joystick and
+  buttons on the cabinet. Your cabinet arrives set up and ready to play, so if you just want to start a
+  game, read <a href="#controls">section&nbsp;2</a> and go.</p>
+
+  <h3 id="anatomy">The main screen</h3>
+  <p>This is where you will spend most of your time. Everything is laid out around the game you have
+  currently highlighted.</p>
+
+  <figure>
+    <div class="shot">
+      <img src="./assets/manual/01-library.jpg" alt="The ARCadeOS main library screen" width="660" height="1225">
+      <span class="pin" style="left:50%;top:4.5%">1</span>
+      <span class="pin" style="left:12%;top:10.4%">2</span>
+      <span class="pin" style="left:50%;top:26%">3</span>
+      <span class="pin" style="left:17%;top:35.5%">4</span>
+      <span class="pin" style="left:5.6%;top:62%">5</span>
+      <span class="pin" style="left:42%;top:63%">6</span>
+      <span class="pin" style="left:19%;top:96%">7</span>
+      <span class="pin" style="left:84%;top:96%">8</span>
+    </div>
+    <ol class="legend">
+      <li><span class="n">1</span> Date, time and cabinet status</li>
+      <li><span class="n">2</span> Category tabs (systems &amp; collections)</li>
+      <li><span class="n">3</span> Hero card &mdash; the highlighted game</li>
+      <li><span class="n">4</span> Play, Details and Favourite actions</li>
+      <li><span class="n">5</span> A&ndash;Z jump bar</li>
+      <li><span class="n">6</span> The game grid</li>
+      <li><span class="n">7</span> Press Start prompt</li>
+      <li><span class="n">8</span> Help and Settings</li>
+    </ol>
+    <figcaption><b>The main screen.</b> Your cabinet&rsquo;s artwork, background video and accent colour
+      may differ &mdash; the layout is the same.</figcaption>
+  </figure>
+
+  <h3 id="firstrun">First-time setup</h3>
+  <p>The very first time a cabinet starts, a short setup wizard runs. It asks for a few things and then
+  gets out of your way:</p>
+  <ul>
+    <li><b>A name for your cabinet.</b> This is how other ARCade cabinets will see you if you ever turn
+      on <a href="#share">ARCade Share</a>. It is revealed with a slot-machine spin &mdash; you can keep
+      spinning until you get one you like.</li>
+    <li><b>Where your games live</b>, if you already have a collection to point it at.</li>
+    <li><b>Whether to scan for games now.</b></li>
+  </ul>
+  <p>You can change any of this later in <a href="#settings">Settings</a>, and you can re-run the wizard
+  from <b>Settings &rarr; System</b>.</p>
+
+  <div class="note tip"><span class="lbl">Tip</span>
+    <p>A different tip appears each time ARCadeOS starts, highlighting a shortcut or feature you may not
+    have found yet. Press <span class="btn b">B</span> to dismiss it, or turn them off in
+    <b>Settings &rarr; Display</b>.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 2 -->
+<section id="controls">
+  <h2><span class="num">2</span>Your controls</h2>
+  <p class="lede">Every screen in ARCadeOS is built for a joystick and buttons first. The same handful of
+  controls works everywhere, including inside Settings.</p>
+
+  <h3 id="buttons">Button reference</h3>
+  <p>These are the defaults. Your cabinet&rsquo;s buttons are labelled in the same way as an Xbox pad,
+  because that is what the control panel presents itself as.</p>
+
+  <table>
+    <thead><tr><th style="width:9rem">Button</th><th>What it does</th><th style="width:8rem">Keyboard</th></tr></thead>
+    <tbody>
+      <tr><td><span class="btn a">A</span></td><td><b>Launch / Select.</b> Starts the highlighted game, or activates whatever is focused.</td><td><kbd>Enter</kbd></td></tr>
+      <tr><td><span class="btn b">B</span></td><td><b>Back.</b> Leaves the current screen, closes a card, or returns to the grid.</td><td><kbd>Esc</kbd></td></tr>
+      <tr><td><span class="btn x">X</span></td><td><b>Favourite.</b> Adds or removes the highlighted game from the Favourites tab.</td><td><kbd>F</kbd></td></tr>
+      <tr><td><span class="btn y">Y</span></td><td><b>Details.</b> Opens the game&rsquo;s full information, artwork and play history.</td><td><kbd>I</kbd></td></tr>
+      <tr><td><b>Start</b></td><td><b>Settings.</b> Opens Settings from anywhere.</td><td><kbd>S</kbd></td></tr>
+      <tr><td><b>Back / Select</b></td><td><b>Mute.</b> Silences and un-silences everything instantly. A speaker icon shows while muted.</td><td><kbd>M</kbd></td></tr>
+      <tr><td><b>LB</b> / <b>RB</b></td><td><b>Previous / next category.</b> Jumps between Arcade, Pinball, Steam, Favourites and the rest.</td><td><kbd>Q</kbd> / <kbd>E</kbd></td></tr>
+      <tr><td><b>LT</b> / <b>RT</b></td><td><b>Previous / next music track</b> while you browse.</td><td>&mdash;</td></tr>
+      <tr><td><b>D-pad</b> / stick</td><td><b>Move</b> around the grid, the tabs, the A&ndash;Z bar and every menu.</td><td>Arrow keys</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <img src="./assets/manual/03-help.png" alt="The in-app Help and Controls card" width="660" height="1225">
+    <figcaption><b>Help &amp; Controls</b>, available at any time from the <b>Help</b> button at the bottom
+      of the screen. It always shows your cabinet&rsquo;s current mapping, including any changes you have made.</figcaption>
+  </figure>
+
+  <div class="note"><span class="lbl">Quitting a game</span>
+    <p>Once you are inside a game, ARCadeOS steps aside. <b>Hold the two exit buttons together</b> to quit
+    and come straight back to your library. Your cabinet&rsquo;s exit combination is shown in
+    <b>Settings &rarr; Controls &rarr; Coin, Start &amp; Exit</b>.</p>
+  </div>
+
+  <h3 id="remap">Remapping</h3>
+  <p>Any action can be moved to a different button. Go to
+  <b>Settings &rarr; Controls &rarr; Menu navigation</b>, pick the action, and press the button you want.
+  You can also capture a <em>keyboard key</em> for the same action, which is what you need for spinners,
+  trackballs, encoders and extra panel buttons that send key codes rather than gamepad input.</p>
+</section>
+
+<!-- ============================================================ 3 -->
+<section id="browse">
+  <h2><span class="num">3</span>Browsing your library</h2>
+
+  <h3 id="categories">Categories</h3>
+  <p>The row of tabs across the top splits your library up. You will see a tab for each system you own
+  games for &mdash; Arcade, pinball, the consoles, Steam and your external launchers &mdash; plus
+  <b>All Games</b>, <b>Favourites</b>, <b>Recent</b> and <b>Most Played</b>.</p>
+  <p>Move between tabs with the <b>shoulder buttons</b> (LB and RB). This is much faster than walking the
+  d-pad up to the tab row, and it works from anywhere in the grid.</p>
+  <p>Tabs can show a platform logo, a name, or both &mdash; your choice, in
+  <b>Settings &rarr; Display &rarr; Platform tabs</b>.</p>
+
+  <h3 id="az">The A&ndash;Z jump bar</h3>
+  <p>The narrow strip of letters down the left edge is the fastest way through a large library. Push
+  <b>left</b> from the first column of the grid to hop onto it, move <b>up and down</b> to a letter, then
+  press <b>right</b> or <span class="btn a">A</span> to drop back into the grid at that letter.</p>
+  <p>The bar only lists letters you actually have games for, so there are no dead stops.</p>
+
+  <h3 id="favorites">Favourites &amp; Recent</h3>
+  <p>Press <span class="btn x">X</span> on any game to favourite it &mdash; it appears immediately in the
+  <b>Favourites</b> tab. Press <span class="btn x">X</span> again to remove it.</p>
+  <p><b>Recent</b> and <b>Most Played</b> build themselves as you play. You never have to curate them.</p>
+</section>
+
+<!-- ============================================================ 4 -->
+<section id="playing">
+  <h2><span class="num">4</span>Playing games</h2>
+
+  <h3 id="launch">Launching and quitting</h3>
+  <ol class="steps">
+    <li>Highlight a game in the grid.</li>
+    <li>Press <span class="btn a">A</span>, or move to the hero card and choose <b>Play</b>.</li>
+    <li>ARCadeOS launches the right emulator with the right settings for that game. Nothing to configure.</li>
+    <li>To come back, <b>hold the two exit buttons together</b>.</li>
+  </ol>
+  <p>If a game cannot start because something is missing &mdash; an emulator, a core, a BIOS file &mdash;
+  ARCadeOS tells you what is missing instead of failing silently, and can usually install it for you.
+  See <a href="#readiness">systems readiness</a>.</p>
+
+  <h3 id="details">The details screen</h3>
+  <p>Press <span class="btn y">Y</span> on any game for its full page: box art, logo, description, the
+  year and developer, how many players it supports, and your own play history.</p>
+
+  <figure>
+    <img src="./assets/manual/02-details.jpg" alt="A game details screen" width="660" height="1225">
+    <figcaption><b>The details screen.</b> Play, Favourite, <b>Edit art &amp; details</b>, and
+      &mdash; when ARCade Share is on &mdash; <b>Share</b>.</figcaption>
+  </figure>
+
+  <p>From here you can also:</p>
+  <ul>
+    <li><b>Edit art &amp; details</b> &mdash; replace the box art, logo, background or marquee for that
+      game, or correct its title and description. Useful when an automatic artwork match picked the wrong
+      regional release.</li>
+    <li><b>Set the joystick type</b> &mdash; 4-way or 8-way. On a cabinet fitted with the restrictor
+      servo, ARCadeOS physically switches the joystick gate to match the game as it launches.</li>
+    <li><b>Share</b> the game with other cabinets (see <a href="#share">section&nbsp;6</a>).</li>
+  </ul>
+
+  <h3 id="sound">Music &amp; sound</h3>
+  <p>ARCadeOS plays background music while you browse and can play a video behind the grid. The
+  <b>triggers</b> skip tracks; <b>Back / Select</b> mutes everything at once.</p>
+  <p>Every volume in the cabinet lives together in <b>Settings &rarr; Sound</b> &mdash; jukebox music,
+  background video, launch video and interface sounds &mdash; so you can balance them in one place.</p>
+</section>
+
+<!-- ============================================================ 5 -->
+<section id="adding">
+  <h2><span class="num">5</span>Adding games</h2>
+  <p class="lede">ARCadeOS finds artwork, descriptions and metadata for what you add, automatically.
+  You supply the games; it does the presentation.</p>
+
+  <h3 id="usb">From a USB drive (the easy way)</h3>
+  <ol class="steps">
+    <li>Plug any USB drive into the cabinet. ARCadeOS creates a folder on it called
+      <b>ARCadeOS Import Folder</b>, with a subfolder for every system it supports.</li>
+    <li>Take the drive to your computer and copy your games into the matching subfolders. If you have
+      your own artwork, put it in the <b>Media</b> subfolders.</li>
+    <li>Plug the drive back into the cabinet. The importer opens by itself and gets to work.</li>
+  </ol>
+
+  <h3 id="folder">From a folder on the cabinet</h3>
+  <p>Open <b>Settings &rarr; Games &amp; library &rarr; Open importer</b>, then <b>Browse&hellip;</b> to a
+  folder and press <b>Scan</b>. This is the route to use for a drive you have already copied games onto,
+  or a network share.</p>
+
+  <div class="fig-row">
+    <figure>
+      <img src="./assets/manual/05-games-library.png" alt="The Games and library settings section" width="660" height="1225">
+      <figcaption><b>Settings &rarr; Games &amp; library.</b></figcaption>
+    </figure>
+    <figure>
+      <img src="./assets/manual/08-importer.png" alt="The game importer scanning a folder" width="660" height="1225">
+      <figcaption><b>The importer</b> scanning a folder. Large collections take a few minutes.</figcaption>
+    </figure>
+  </div>
+
+  <p>Whichever route you use, ARCadeOS will:</p>
+  <ul>
+    <li>work out which system each file belongs to;</li>
+    <li>skip anything already in your library, so re-scanning is always safe;</li>
+    <li>look up box art, logos, marquees, descriptions and release details online;</li>
+    <li>install the emulator or core that system needs, if it is not there yet.</li>
+  </ul>
+
+  <div class="note"><span class="lbl">Artwork lookup</span>
+    <p>Artwork comes from public databases. For the widest coverage you can add your own free API keys
+    for RAWG and SteamGridDB in <b>Settings &rarr; Games &amp; library &rarr; Artwork sources</b> &mdash;
+    each has a <b>Get a free key</b> button that takes you straight to the sign-up page. This is optional;
+    ARCadeOS finds most artwork without it.</p>
+  </div>
+
+  <h3 id="readiness">Systems readiness</h3>
+  <p><b>Settings &rarr; Games &amp; library &rarr; Check systems readiness</b> lists every system in your
+  library and tells you whether it is ready to play or waiting on something &mdash; a missing emulator, a
+  missing core, a missing BIOS. Anything it can fix, it fixes with one press.</p>
+</section>
+
+<!-- ============================================================ 6 -->
+<section id="share">
+  <h2><span class="num">6</span>ARCade Share</h2>
+  <p class="lede">ARCade Share lets your cabinet swap games directly with other ARCade cabinets.
+  There are no accounts to create, no servers to pay for, and no router configuration. It is off until
+  you turn it on, and it only ever offers the games you pick.</p>
+
+  <h3 id="share-on">Turning it on</h3>
+  <p>Go to <b>Settings &rarr; Network &amp; sharing &rarr; ARCade Share</b> and switch it on. The first
+  start takes a minute or two while the cabinet establishes its private connection; after that it is
+  automatic every time.</p>
+
+  <div class="fig-row">
+    <figure>
+      <img src="./assets/manual/06-share.png" alt="ARCade Share settings" width="660" height="1225">
+      <figcaption><b>Settings &rarr; Network &amp; sharing.</b> The status line tells you whether you are
+        online and how many games you are offering.</figcaption>
+    </figure>
+    <figure>
+      <img src="./assets/manual/07-share-panel.png" alt="The ARCade Share panel" width="660" height="1225">
+      <figcaption><b>The ARCade Share panel</b> &mdash; your cabinet name and address, who else is online,
+        transfers in progress, and what you are sharing.</figcaption>
+    </figure>
+  </div>
+
+  <h3 id="share-give">Sharing your games</h3>
+  <p>Two ways, both opt-in:</p>
+  <ul>
+    <li>From a game&rsquo;s <b>details screen</b>, choose <b>Share</b>. That single game is now offered.</li>
+    <li>From the <b>ARCade Share panel</b>, tick whole categories at once &mdash; useful for offering, say,
+      all your pinball tables.</li>
+  </ul>
+  <p>Nothing is shared until you tick it, and un-ticking withdraws it immediately.</p>
+
+  <h3 id="share-get">Downloading from another cabinet</h3>
+  <p>When another cabinet is online and offering games, an <b>ARCade Share</b> category appears in your
+  tab row with two sections: what other cabinets are offering, and what you are sharing.</p>
+  <p>Games you do not have yet appear in greyscale. Highlight one and press <b>Download</b>. The tile
+  fills with colour as it arrives, showing the percentage as it goes, and a message confirms when it
+  lands in your library &mdash; complete with its artwork.</p>
+  <p>A game you <em>already own</em> shows in full colour with a <b>Play</b> button instead, so you are
+  never offered a duplicate.</p>
+
+  <h3 id="share-privacy">Privacy</h3>
+  <p>ARCade Share runs over the Tor network. That means your cabinet is reachable by its private address
+  only &mdash; not by your home IP address &mdash; and there is nothing to forward on your router.</p>
+  <ul>
+    <li>You share <b>only</b> the games you tick.</li>
+    <li>Your cabinet is identified by the name you chose, nothing more.</li>
+    <li>Turning ARCade Share off stops everything immediately.</li>
+  </ul>
+
+  <div class="note warn"><span class="lbl">Please note</span>
+    <p>ARCade Share is a tool for moving <em>your own</em> files between <em>your own</em> machines, and
+    for sharing content you have the right to share. What you choose to offer is your responsibility.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 7 -->
+<section id="settings">
+  <h2><span class="num">7</span>Settings</h2>
+  <p class="lede">Settings is organised into nine sections, ordered by how often people actually use
+  them. Everything you are likely to change is near the top; the specialist controls are tucked into
+  collapsible panels inside each section, so the list stays short.</p>
+
+  <p>Open Settings with <b>Start</b> from anywhere. Move with the d-pad, open a section with
+  <span class="btn a">A</span>, and back out with <span class="btn b">B</span>.</p>
+
+  <figure>
+    <img src="./assets/manual/04-settings.png" alt="The Settings screen with the Display section open" width="660" height="1225">
+    <figcaption><b>Settings</b>, with <b>Display</b> open. The other eight sections are collapsed
+      beneath it.</figcaption>
+  </figure>
+
+  <table>
+    <thead><tr><th style="width:12rem">Section</th><th>What lives there</th></tr></thead>
+    <tbody>
+      <tr><td><b>Display</b></td><td>Theme and <b>accent colour</b>, how the platform tabs look, how many
+        game tiles fit across, which category ARCadeOS opens on, full-screen start, 24-hour clock,
+        and startup tips.</td></tr>
+      <tr><td><b>Sound</b></td><td>Every volume in the cabinet in one place &mdash; jukebox, background
+        video, launch video and interface sounds.</td></tr>
+      <tr><td><b>Games &amp; library</b></td><td>The importer, systems readiness, where your games live,
+        emulator settings, and artwork sources.</td></tr>
+      <tr><td><b>Controls</b></td><td>Menu navigation mapping, the coin / start / exit buttons, per-system
+        control overrides for arcade and pinball, and cabinet hardware such as the joystick restrictor
+        servo and Stream Deck.</td></tr>
+      <tr><td><b>Ambience &amp; attract</b></td><td>Background video, launch video, and attract mode &mdash;
+        what the cabinet does when it has been left alone.</td></tr>
+      <tr><td><b>Network &amp; sharing</b></td><td><a href="#share">ARCade Share</a> and online
+        multiplayer.</td></tr>
+      <tr><td><b>Updates</b></td><td>Automatic updates and the release channel. See
+        <a href="#updates">section&nbsp;8</a>.</td></tr>
+      <tr><td><b>System</b></td><td>Backups, launch helpers, advanced options, and operator tools.</td></tr>
+      <tr><td><b>About &amp; support</b></td><td>Your version and cabinet name, <b>Run diagnostics</b>,
+        health reporting, and links to DIY Engineering.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note tip"><span class="lbl">Make it yours</span>
+    <p><b>Settings &rarr; Display &rarr; Accent colour</b> re-themes the entire frontend in one press
+    &mdash; buttons, highlights, focus rings, the lot.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 8 -->
+<section id="updates">
+  <h2><span class="num">8</span>Staying up to date</h2>
+  <p class="lede">ARCadeOS updates itself. New features and fixes arrive quietly in the background over a
+  secure, signed update feed, and there is nothing for you to download or install by hand.</p>
+
+  <figure>
+    <img src="./assets/manual/09-updates.png" alt="The Updates settings section" width="660" height="1225">
+    <figcaption><b>Settings &rarr; Updates.</b></figcaption>
+  </figure>
+
+  <p>Three switches control the whole thing, and all three are on by default:</p>
+  <ul>
+    <li><b>Check for updates when ARCadeOS starts</b></li>
+    <li><b>Download updates in the background while idle</b> &mdash; so the wait is already over by the
+      time you are offered it</li>
+    <li><b>Install downloaded updates when I exit</b></li>
+  </ul>
+  <p>Choosing to install shows a real progress bar, measured against the actual download rather than a
+  guess, and the cabinet restarts into the new version. You can also check whenever you like with
+  <b>Check for updates</b>.</p>
+
+  <div class="note"><span class="lbl">Never mid-game</span>
+    <p>Updates never install while a game, an import or controller setup is running. The cabinet waits
+    until you are done.</p>
+  </div>
+
+  <p>Your cabinet is on the <b>stable</b> channel, which is what you want. The other channels exist for
+  DIY Engineering&rsquo;s own testing.</p>
+
+  <div class="note"><span class="lbl">Nothing is lost</span>
+    <p>Updates replace the ARCadeOS software only. Your games, artwork, favourites, play history and
+    settings are untouched.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 9 -->
+<section id="care">
+  <h2><span class="num">9</span>Care &amp; troubleshooting</h2>
+
+  <h3 id="diagnostics">Diagnostics &amp; one-tap repair</h3>
+  <p><b>Settings &rarr; About &amp; support &rarr; Run diagnostics</b> checks the whole cabinet: emulators,
+  cores, BIOS files, artwork sources, ARCade Share, updates and free disk space. Each result is green,
+  amber or red, with a plain-English explanation.</p>
+
+  <figure>
+    <img src="./assets/manual/10-about.png" alt="The About and support settings section" width="660" height="1225">
+    <figcaption><b>Settings &rarr; About &amp; support</b> &mdash; version, cabinet name, diagnostics,
+      and direct links to DIY Engineering.</figcaption>
+  </figure>
+
+  <p>Most amber results can be fixed from the same screen with a single press &mdash; ARCadeOS will
+  reinstall a missing emulator or core for you. If something needs a human, use <b>Copy report</b> or
+  <b>Save report</b>: that produces a complete support packet you can paste into an email to us, from a
+  cabinet we cannot reach.</p>
+
+  <h4>Sending health reports</h4>
+  <p>On the same screen you can opt in to <b>Send health reports to DIY Engineering for support</b>. It is
+  <b>off by default</b>. When on, your cabinet periodically sends only: its name, ARCadeOS version, how
+  many games it shares, the pass / warning / problem counts from the check above with a short description
+  of each, free disk space, and whether ARCade Share is connected. No file paths, no keys, no game titles,
+  nothing personal &mdash; and it goes only to DIY Engineering, never to other cabinets. It lets us spot a
+  problem on your cabinet before you have to tell us about it.</p>
+
+  <h3 id="backup">Backups</h3>
+  <p><b>Settings &rarr; System &rarr; Backup</b> exports your settings, favourites, play history and
+  artwork choices to a single file. Worth doing before any big change.</p>
+
+  <h3 id="problems">Common problems</h3>
+  <table>
+    <thead><tr><th style="width:16rem">What you see</th><th>What to do</th></tr></thead>
+    <tbody>
+      <tr><td><b>A game will not start</b></td>
+          <td>Run <b>Check systems readiness</b> (Settings &rarr; Games &amp; library). It will name what is
+            missing and usually install it for you.</td></tr>
+      <tr><td><b>A game has the wrong artwork</b></td>
+          <td>Open the game&rsquo;s details, choose <b>Edit art &amp; details</b>, and pick or replace any
+            image. Common with games that had several regional releases.</td></tr>
+      <tr><td><b>New games did not appear</b></td>
+          <td>Re-run the importer on the folder. Scanning twice is harmless &mdash; anything already in your
+            library is skipped.</td></tr>
+      <tr><td><b>No sound</b></td>
+          <td>Check you are not muted (press <b>Back / Select</b>; a speaker icon shows while muted), then
+            the volumes in <b>Settings &rarr; Sound</b>.</td></tr>
+      <tr><td><b>ARCade Share says<br>&ldquo;Connecting&hellip;&rdquo;</b></td>
+          <td>Give it a couple of minutes on first use. If it stays there, your network may be blocking Tor
+            &mdash; open <b>Network blocking Tor? (bridges)</b> in the ARCade Share panel and follow the
+            steps there.</td></tr>
+      <tr><td><b>ARCade Share shows<br>no other cabinets</b></td>
+          <td>Normal unless another cabinet is switched on and sharing at the same time. Cabinets appear
+            within a few minutes of coming online.</td></tr>
+      <tr><td><b>The cabinet feels sluggish</b></td>
+          <td>Run <b>Run diagnostics</b> and check free disk space &mdash; a nearly full drive is the usual
+            cause.</td></tr>
+      <tr><td><b>Something else</b></td>
+          <td>Run diagnostics, use <b>Copy report</b>, and send it to
+            <a href="mailto:support@diy.engineering">support@diy.engineering</a>.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============================================================ 10 -->
+<section id="support">
+  <h2><span class="num">10</span>Support &amp; contact</h2>
+  <p class="lede">Your ARCade cabinet is handcrafted by DIY Engineering in Winter Garden, Florida, and
+  backed by a twelve-month warranty. If something is not right, talk to us.</p>
+
+  <div class="cards">
+    <div class="card">
+      <h4>Email support</h4>
+      <p><a href="mailto:support@diy.engineering">support@diy.engineering</a></p>
+      <p>Attach a diagnostics report if you can &mdash; it tells us almost everything we need.</p>
+    </div>
+    <div class="card">
+      <h4>Cabinet &amp; support pages</h4>
+      <p><a href="https://www.diy.engineering/arcade">www.diy.engineering/arcade</a></p>
+      <p>Specifications, guides and ordering.</p>
+    </div>
+    <div class="card">
+      <h4>DIY Engineering</h4>
+      <p><a href="https://www.diy.engineering">www.diy.engineering</a></p>
+      <p>Custom product development and engineering, backed by 30+ years of experience.</p>
+    </div>
+    <div class="card">
+      <h4>Video guides</h4>
+      <p><a href="https://youtube.diy.engineering">youtube.diy.engineering</a></p>
+      <p>Walkthroughs and build videos.</p>
+    </div>
+    <div class="card">
+      <h4>Release notes</h4>
+      <p><a href="https://arcadeos.updates.diy.engineering">arcadeos.updates.diy.engineering</a></p>
+      <p>What changed in each version of ARCadeOS.</p>
+    </div>
+    <div class="card">
+      <h4>This manual</h4>
+      <p><a href="https://arcadeos.updates.diy.engineering/manual.html">arcadeos.updates.diy.engineering/manual.html</a></p>
+      <p>Always the current version. Use <b>Print / Save PDF</b> for a paper copy.</p>
+    </div>
+  </div>
+
+  <p>All of these links are also on your cabinet, in
+  <b>Settings &rarr; About &amp; support</b>.</p>
+</section>
+
+<!-- ============================================================ 11 -->
+<section id="quickref">
+  <h2><span class="num">11</span>Quick reference</h2>
+  <p class="lede">Worth printing on its own and keeping near the cabinet.</p>
+
+  <table>
+    <thead><tr><th style="width:14rem">To do this</th><th>Press this</th></tr></thead>
+    <tbody>
+      <tr><td>Start the highlighted game</td><td><span class="btn a">A</span></td></tr>
+      <tr><td>Go back</td><td><span class="btn b">B</span></td></tr>
+      <tr><td>Favourite a game</td><td><span class="btn x">X</span></td></tr>
+      <tr><td>See a game&rsquo;s details</td><td><span class="btn y">Y</span></td></tr>
+      <tr><td>Open Settings</td><td><b>Start</b></td></tr>
+      <tr><td>Open Help</td><td><b>Help</b> button on screen</td></tr>
+      <tr><td>Next / previous category</td><td><b>RB</b> / <b>LB</b></td></tr>
+      <tr><td>Next / previous music track</td><td><b>RT</b> / <b>LT</b></td></tr>
+      <tr><td>Mute everything</td><td><b>Back / Select</b></td></tr>
+      <tr><td>Jump to a letter</td><td>Push <b>left</b> from the first column, then up/down</td></tr>
+      <tr><td>Quit a running game</td><td>Hold <b>both exit buttons</b></td></tr>
+      <tr><td>Add games</td><td>Plug in a USB drive, or Settings &rarr; Games &amp; library</td></tr>
+      <tr><td>Fix a problem</td><td>Settings &rarr; About &amp; support &rarr; Run diagnostics</td></tr>
+    </tbody>
+  </table>
+</section>
+
+</main>
+</div>
+
+<footer>
+  ARCadeOS User Manual &mdash; v1.28.44 &middot; &copy; 2026 DIY.Engineering LLC<br>
+  <a href="https://www.diy.engineering">www.diy.engineering</a> &middot;
+  <a href="mailto:support@diy.engineering">support@diy.engineering</a>
+</footer>
+
+</body></html>
